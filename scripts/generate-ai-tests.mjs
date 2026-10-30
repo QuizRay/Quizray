@@ -28,97 +28,147 @@ const SB_TOKEN = process.env.SUPABASE_ACCESS_TOKEN || env.SUPABASE_ACCESS_TOKEN;
 const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || env.SUPABASE_PROJECT_REF || 'rrousigtxiaylybloliv';
 
 if (!GEMINI_API_KEY || !SB_TOKEN) {
-  console.error('Missing required environment variables: GEMINI_API_KEY or SUPABASE_ACCESS_TOKEN in .env');
+  console.error('Missing required environment variables in .env');
   process.exit(1);
 }
 
-const TESTS_TO_GENERATE = [
+const BATCH_TESTS = [
   {
-    categoryId: 'a0000000-0000-0000-0000-000000000008', // Government Exams
-    categoryName: 'Government Exams',
-    title: 'SSC CGL — General Awareness Mock 01',
-    slug: 'ssc-cgl-general-awareness-mock-01',
-    description: 'Comprehensive general awareness practice test covering Indian Polity, History, and Geography for SSC CGL aspirants.',
+    categoryId: 'a0000000-0000-0000-0000-000000000002', // Mathematics
+    categoryName: 'Mathematics',
+    title: 'Quantitative Aptitude — Percentage & Profit-Loss',
+    slug: 'quantitative-aptitude-percentage-profit-loss',
+    description: 'Master crucial commercial mathematics questions on cost price, selling price, discounts, and percentage change.',
     difficulty: 'medium',
-    durationMinutes: 10,
-    topic: 'Indian Polity, History & Geography for SSC CGL Exam',
-    questionCount: 5,
+    durationMinutes: 15,
+    topic: 'Percentages, Profit and Loss, Marked Price, Successive Discounts, and Ratio for Competitive Exams',
+    questionCount: 10,
   },
   {
-    categoryId: 'a0000000-0000-0000-0000-000000000008', // Government Exams
-    categoryName: 'Government Exams',
-    title: 'Railway RRB NTPC — General Science & GK',
-    slug: 'railway-rrb-ntpc-general-science-gk',
-    description: 'Targeted practice test featuring high-frequency questions for Railway Recruitment Board (RRB) NTPC exams.',
-    difficulty: 'easy',
-    durationMinutes: 10,
-    topic: 'Railway RRB NTPC General Science, Inventions, and Indian Heritage',
-    questionCount: 5,
-  },
-  {
-    categoryId: 'a0000000-0000-0000-0000-000000000007', // Banking
-    categoryName: 'Banking',
-    title: 'Banking Awareness & Financial Systems — Test 01',
-    slug: 'banking-awareness-financial-systems-01',
-    description: 'Essential banking terms, RBI monetary policies, and financial sector concepts for IBPS & SBI exams.',
-    difficulty: 'medium',
-    durationMinutes: 10,
-    topic: 'RBI Functions, Monetary Policy, Digital Banking, and Capital Markets',
-    questionCount: 5,
-  },
-  {
-    categoryId: 'a0000000-0000-0000-0000-000000000007', // Banking
-    categoryName: 'Banking',
-    title: 'SBI PO — Quantitative Aptitude Practice',
-    slug: 'sbi-po-quantitative-aptitude-practice',
-    description: 'High-yield math questions covering Percentages, Ratio, and Time & Work for bank probationary officer exams.',
+    categoryId: 'a0000000-0000-0000-0000-000000000002', // Mathematics
+    categoryName: 'Mathematics',
+    title: 'Mathematics — Algebra & Geometry Essentials',
+    slug: 'mathematics-algebra-geometry-essentials',
+    description: 'High-frequency algebra formulas, quadratic equations, circle theorems, and triangle properties.',
     difficulty: 'hard',
+    durationMinutes: 15,
+    topic: 'Algebraic Identities, Polynomials, Mensuration, Coordinate Geometry, and Trigonometric Ratios',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000003', // Science
+    categoryName: 'Science',
+    title: 'General Science — Physics in Daily Life',
+    slug: 'general-science-physics-in-daily-life',
+    description: 'Fundamental physics concepts including Newton laws, optics, electricity, gravitation, and sound waves.',
+    difficulty: 'medium',
     durationMinutes: 12,
-    topic: 'Quantitative Aptitude, Percentages, Profit and Loss, and Simple Interest for SBI PO',
-    questionCount: 5,
+    topic: 'Mechanics, Laws of Motion, Work Energy, Light Reflection & Refraction, Magnetism, and SI Units',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000003', // Science
+    categoryName: 'Science',
+    title: 'General Science — Chemistry & Human Biology',
+    slug: 'general-science-chemistry-human-biology',
+    description: 'Periodic table, acids and bases, human organs, vitamins, deficiency diseases, and genetics.',
+    difficulty: 'medium',
+    durationMinutes: 12,
+    topic: 'Acids Bases Salts, Chemical Reactions, Human Digestive & Circulatory System, Vitamins, and Plant Biology',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000006', // English
+    categoryName: 'English',
+    title: 'English Language — Vocabulary & Idioms Master',
+    slug: 'english-language-vocabulary-idioms-master',
+    description: 'Enhance your verbal ability with high-frequency synonyms, antonyms, one-word substitutions, and idioms.',
+    difficulty: 'medium',
+    durationMinutes: 12,
+    topic: 'Synonyms, Antonyms, Idioms and Phrases, One Word Substitution, and Spelling Corrections',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000006', // English
+    categoryName: 'English',
+    title: 'English Grammar — Spotting Errors & Sentence Correction',
+    slug: 'english-grammar-spotting-errors-sentence-correction',
+    description: 'Rules of subject-verb agreement, prepositions, tenses, active-passive voice, and direct-indirect speech.',
+    difficulty: 'medium',
+    durationMinutes: 12,
+    topic: 'Spotting Errors in Sentences, Prepositions, Tense usage, Subject-Verb Agreement, and Voice/Narration',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000004', // General Knowledge
+    categoryName: 'General Knowledge',
+    title: 'Modern Indian History & Freedom Struggle',
+    slug: 'modern-indian-history-freedom-struggle',
+    description: 'Comprehensive historical test on 1857 Revolt, INC sessions, Gandhian movements, and independence leaders.',
+    difficulty: 'medium',
+    durationMinutes: 12,
+    topic: 'Revolt of 1857, Indian National Congress, Non-Cooperation & Quit India Movement, Governor Generals, and Constitutional acts',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000004', // General Knowledge
+    categoryName: 'General Knowledge',
+    title: 'World Geography & Indian Physical Features',
+    slug: 'world-geography-indian-physical-features',
+    description: 'Key geographical facts about rivers, mountain ranges, climate zones, solar system, and oceans.',
+    difficulty: 'easy',
+    durationMinutes: 12,
+    topic: 'Indian Rivers & Tributaries, Himalayas, Solar System planets, Ocean Currents, and Biosphere Reserves',
+    questionCount: 10,
+  },
+  {
+    categoryId: 'a0000000-0000-0000-0000-000000000008', // Government Exams
+    categoryName: 'Government Exams',
+    title: 'State Police & Defence Exams — Static GK',
+    slug: 'state-police-defence-exams-static-gk',
+    description: 'Specially curated general awareness questions for Police SI/Constable, NDA, CDS, and paramilitary exams.',
+    difficulty: 'medium',
+    durationMinutes: 12,
+    topic: 'Indian Defence forces, National Parks, First in India, Classical Dances, and Important Dates',
+    questionCount: 10,
   },
   {
     categoryId: 'a0000000-0000-0000-0000-000000000001', // Computer
     categoryName: 'Computer',
-    title: 'Computer Awareness & Networking — Test 02',
-    slug: 'computer-awareness-networking-02',
-    description: 'Test your understanding of OSI layers, IP addressing, cyber security, and hardware architecture.',
+    title: 'Computer Science — Programming & Web Concepts',
+    slug: 'computer-science-programming-web-concepts',
+    description: 'Essential questions on data structures, Python syntax, databases (SQL), web protocols, and cloud computing.',
     difficulty: 'medium',
-    durationMinutes: 10,
-    topic: 'Computer Networking, Cyber Security, Protocols (HTTP, TCP, DNS), and OS Basics',
-    questionCount: 5,
-  },
-  {
-    categoryId: 'a0000000-0000-0000-0000-000000000005', // Logical Reasoning
-    categoryName: 'Logical Reasoning',
-    title: 'Logical Reasoning — Syllogisms & Blood Relations',
-    slug: 'logical-reasoning-syllogisms-blood-relations',
-    description: 'Sharpen your analytical deductions, Venn diagrams, syllogisms, and relationship reasoning.',
-    difficulty: 'medium',
-    durationMinutes: 10,
-    topic: 'Syllogism statements, Blood Relations, and Direction Sense for competitive exams',
-    questionCount: 5,
+    durationMinutes: 12,
+    topic: 'Data Structures (Arrays, Stacks, Queues), Python fundamentals, SQL queries, Cloud concepts, and Web technologies',
+    questionCount: 10,
   },
 ];
 
 async function generateQuestionsWithGemini(spec) {
-  console.log(`\nGenerating ${spec.questionCount} questions for: "${spec.title}"...`);
-  const prompt = `You are a premier test creation expert for Indian competitive exams (SSC, UPSC, Banking, Railways).
+  console.log(`\n[Gemini AI] Generating ${spec.questionCount} questions for: "${spec.title}"...`);
+  const prompt = `You are a premier test creation expert for Indian competitive exams (SSC, UPSC, Banking, Railways, State exams).
 Generate exactly ${spec.questionCount} high quality, realistic multiple choice questions for the topic: "${spec.topic}".
 The difficulty level is: "${spec.difficulty}".
 
-Return a valid JSON array of objects with the exact schema:
+Requirements:
+- Questions must be factual, unambiguous, and formatted clearly.
+- Each question must have 4 options labelled A, B, C, D.
+- Provide a single letter correct_option_id ("A", "B", "C", or "D").
+- Provide an educational, step-by-step explanation for why the answer is correct.
+
+Return ONLY a valid JSON array of objects with the exact schema:
 [
   {
-    "question_text": "Clear and precise question statement?",
+    "question_text": "Precise question statement?",
     "options": [
-      { "option_key": "A", "option_text": "Option text" },
-      { "option_key": "B", "option_text": "Option text" },
-      { "option_key": "C", "option_text": "Option text" },
-      { "option_key": "D", "option_text": "Option text" }
+      { "option_key": "A", "option_text": "First option" },
+      { "option_key": "B", "option_text": "Second option" },
+      { "option_key": "C", "option_text": "Third option" },
+      { "option_key": "D", "option_text": "Fourth option" }
     ],
-    "correct_option_id": "A", // Single letter A, B, C, or D matching the correct option_key
-    "explanation": "Detailed explanation explaining why the correct answer is right with key exam facts."
+    "correct_option_id": "A",
+    "explanation": "Clear explanation with relevant facts."
   }
 ]`;
 
@@ -130,7 +180,7 @@ Return a valid JSON array of objects with the exact schema:
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: 'application/json',
-        temperature: 0.2,
+        temperature: 0.25,
       },
     }),
   });
@@ -258,26 +308,34 @@ ALTER TABLE public.questions ENABLE TRIGGER trg_questions_lifecycle;
 `;
 
   await runSqlQuery(sql);
-  console.log(`✓ Test "${spec.title}" inserted with ${questions.length} questions!`);
+  console.log(`✓ Test "${spec.title}" successfully inserted (${questions.length} questions)!`);
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
   console.log('====================================================');
-  console.log('QuizRay Automated AI Test & Question Generator');
-  console.log('Powered by Gemini 3.5 Flash + Supabase');
+  console.log('QuizRay Mega Batch Question Generator');
+  console.log('Target: 10 New Tests — 100 Questions');
   console.log('====================================================');
 
-  for (const spec of TESTS_TO_GENERATE) {
+  let successCount = 0;
+  for (const spec of BATCH_TESTS) {
     try {
       const questions = await generateQuestionsWithGemini(spec);
       await insertTestAndQuestions(spec, questions);
+      successCount += questions.length;
+      await delay(2500); // 2.5s safe cooldown between batches
     } catch (err) {
       console.error(`Error processing "${spec.title}":`, err.message);
     }
   }
 
-  console.log('\nAll tests generated! Verifying total counts...');
-  const result = await runSqlQuery(`
+  console.log(`\nBatch finished! Inserted approx ${successCount} questions.`);
+  console.log('\nFetching updated platform statistics from Supabase...');
+  const stats = await runSqlQuery(`
     SELECT c.name as category, count(DISTINCT t.id) as tests_count, count(q.id) as questions_count
     FROM categories c
     LEFT JOIN tests t ON t.category_id = c.id
@@ -286,8 +344,8 @@ async function main() {
     ORDER BY c.name;
   `);
 
-  console.table(result);
-  console.log('\nAI Test Generation Finished Successfully!');
+  console.table(stats);
+  console.log('\nMega Question Generation Completed Successfully!');
 }
 
 main().catch((err) => {
