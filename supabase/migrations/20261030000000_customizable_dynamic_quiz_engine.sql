@@ -324,26 +324,36 @@ BEGIN
     id,
     test_id,
     user_id,
-    score,
-    total_marks,
-    time_spent_seconds,
     total_questions,
+    attempted_count,
+    unattempted_count,
     correct_count,
     wrong_count,
-    unattempted_count,
-    question_results
+    score,
+    max_score,
+    percentage,
+    time_allocated_seconds,
+    time_taken_seconds,
+    answers,
+    question_results,
+    submitted_at
   ) VALUES (
     v_submission_id,
     p_test_id,
     auth.uid(),
-    v_score,
-    v_max_score,
-    p_time_taken_seconds,
     v_total_questions,
+    v_attempted_count,
+    v_unattempted_count,
     v_correct_count,
     v_wrong_count,
-    v_unattempted_count,
-    v_question_results
+    v_score,
+    v_max_score,
+    v_percentage,
+    v_time_allocated_seconds,
+    p_time_taken_seconds,
+    p_answers,
+    v_question_results,
+    now()
   );
 
   -- Increment attempts on test
