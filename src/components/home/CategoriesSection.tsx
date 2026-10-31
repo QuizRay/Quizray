@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { quizService } from '../../services/quizService';
 import { POPULAR_CATEGORIES } from '../../data/mockData';
 import { CategoryCard } from './CategoryCard';
 import type { Category } from '../../types';
@@ -8,11 +9,32 @@ interface CategoriesSectionProps {
 }
 
 export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ onSelectCategory }) => {
+  const [categories, setCategories] = useState<Category[]>(POPULAR_CATEGORIES);
+
+  useEffect(() => {
+    let isCurrent = true;
+    quizService
+      .getCategories()
+      .then((cats) => {
+        if (isCurrent && cats && cats.length > 0) {
+          setCategories(cats);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load categories for home page:', err);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   const handleCategorySelect = (category: Category) => {
+    const slugOrId = category.slug || category.id;
     if (onSelectCategory) {
-      onSelectCategory(category.id);
+      onSelectCategory(slugOrId);
     } else {
-      window.location.hash = `#/category/${category.id}`;
+      window.location.hash = `#/category/${slugOrId}`;
     }
   };
 
@@ -34,7 +56,7 @@ export const CategoriesSection: React.FC<CategoriesSectionProps> = ({ onSelectCa
 
         {/* Responsive Grid: 1 col on mobile, 2 on tablet, 4 on desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {POPULAR_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <CategoryCard
               key={category.id}
               category={category}

@@ -203,7 +203,7 @@ export const TestListView: React.FC<TestListViewProps> = ({ onSelectTest, onNavi
                   <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs text-slate-600">
                     <div className="flex items-center gap-1">
                       <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{test.questions.length} Qs</span>
+                      <span>{test.questions?.length || test.totalMarks || 10} Qs</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />

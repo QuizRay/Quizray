@@ -48,7 +48,7 @@ const AppContent: React.FC = () => {
   const { activeTest, startQuiz } = useQuiz();
   const { isAuthModalOpen, authModalMode, closeAuthModal } = useAuth();
 
-  const testIdParam = route.params.testId || 'test-computer-01';
+  const testIdParam = route.params.testId || 'computer-basics-test-01';
 
   // Ensure active quiz is loaded into QuizContext if entering or refreshing on the quiz route directly
   useEffect(() => {
@@ -143,7 +143,7 @@ const AppContent: React.FC = () => {
       {route.name !== 'quiz' && (
         <Header
           onNavigateHome={toHome}
-          onNavigateCategories={() => toCategory('cat-computer')}
+          onNavigateCategories={() => toCategory('computer')}
           onNavigateTests={toTests}
           onNavigateProfile={toProfile}
           onNavigateHistory={toHistory}
@@ -159,7 +159,7 @@ const AppContent: React.FC = () => {
               onExploreCategories={() => {
                 const el = document.querySelector('#categories');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
-                else toCategory('cat-computer');
+                else toCategory('computer');
               }}
             />
             <CategoriesSection onSelectCategory={toCategory} />
@@ -171,7 +171,7 @@ const AppContent: React.FC = () => {
 
         {route.name === 'category' && (
           <CategoryDetailView
-            categoryId={route.params.categoryId || 'cat-computer'}
+            categoryId={route.params.categoryId || 'computer'}
             onSelectTest={toInstructions}
             onNavigateHome={toHome}
             onSelectCategory={toCategory}

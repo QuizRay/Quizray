@@ -61,21 +61,22 @@ export const quizService = {
     const client = supabase!;
     const { data, error } = await client
       .from('categories')
-      .select('*')
+      .select('*, tests(count)')
       .eq('is_active', true)
+      .eq('tests.is_published', true)
       .order('sort_order', { ascending: true });
 
     if (error) {
       throw new Error(`Database error fetching categories: ${error.message}`);
     }
 
-    return (data || []).map((row) => ({
+    return (data || []).map((row: any) => ({
       id: row.id,
       name: row.name,
       slug: row.slug,
       description: row.description || '',
       iconName: (row.icon || 'computer') as Category['iconName'],
-      testCount: 0, // Computed by joining tests if needed
+      testCount: row.tests?.[0]?.count ?? 0,
       orderIndex: row.sort_order,
       isActive: row.is_active,
       createdAt: row.created_at,
@@ -83,9 +84,29 @@ export const quizService = {
   },
 
   async getCategoryById(categoryIdOrSlug: string): Promise<Category | null> {
+    if (!categoryIdOrSlug) return null;
+
+    // Normalization map for legacy mock IDs like 'cat-english', 'cat-computer'
+    const LEGACY_MAP: Record<string, string> = {
+      'cat-computer': 'computer',
+      'cat-mathematics': 'mathematics',
+      'cat-math': 'mathematics',
+      'cat-science': 'science',
+      'cat-gk': 'general-knowledge',
+      'cat-general-knowledge': 'general-knowledge',
+      'cat-reasoning': 'logical-reasoning',
+      'cat-logical-reasoning': 'logical-reasoning',
+      'cat-english': 'english',
+      'cat-banking': 'banking',
+      'cat-gov': 'government-exams',
+      'cat-gov-exams': 'government-exams',
+      'cat-government-exams': 'government-exams',
+    };
+    const normalized = LEGACY_MAP[categoryIdOrSlug] || categoryIdOrSlug.replace(/^cat-/, '');
+
     if (!isSupabaseConfigured()) {
       const found = localCategories.find(
-        (c) => c.id === categoryIdOrSlug || c.slug === categoryIdOrSlug
+        (c) => c.id === categoryIdOrSlug || c.slug === categoryIdOrSlug || c.slug === normalized
       );
       return found || null;
     }
@@ -99,7 +120,7 @@ export const quizService = {
     if (isUuid) {
       query = query.or(`id.eq.${categoryIdOrSlug},slug.eq.${categoryIdOrSlug}`);
     } else {
-      query = query.eq('slug', categoryIdOrSlug);
+      query = query.or(`slug.eq.${categoryIdOrSlug},slug.eq.${normalized}`);
     }
 
     const { data, error } = await query.maybeSingle();
@@ -204,8 +225,16 @@ export const quizService = {
   // Fetch test and questions for students WITHOUT exposing answer keys or explanations
   // ----------------------------------------------------------------------------
   async getStudentTestById(testIdOrSlug: string, questionCount?: number, durationMinutes?: number): Promise<QuizTest | null> {
+    const LEGACY_TEST_MAP: Record<string, string> = {
+      'test-computer-01': 'computer-basics-test-01',
+      'test-english-01': 'english-grammar-test-01',
+      'test-gk-01': 'general-knowledge-test-01',
+      'test-reasoning-01': 'logical-reasoning-test-01',
+    };
+    const targetSlugOrId = LEGACY_TEST_MAP[testIdOrSlug] || testIdOrSlug;
+
     if (!isSupabaseConfigured()) {
-      const found = localTests.find((t) => t.id === testIdOrSlug || t.slug === testIdOrSlug);
+      const found = localTests.find((t) => t.id === targetSlugOrId || t.slug === targetSlugOrId);
       if (!found) return null;
 
       // Strip correctOptionId and explanation to guarantee identical student security in local mode
@@ -229,7 +258,7 @@ export const quizService = {
 
     // Call secure server-side RPC with custom question count and pool scope for true variety each attempt
     const rpcParams: Record<string, unknown> = {
-      p_slug_or_id: testIdOrSlug,
+      p_slug_or_id: targetSlugOrId,
       p_shuffle_questions: true,
       p_shuffle_options: true,
     };

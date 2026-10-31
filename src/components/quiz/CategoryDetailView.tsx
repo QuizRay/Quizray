@@ -43,7 +43,7 @@ const categoryIconMap: Record<Category['iconName'], LucideIcon> = {
 };
 
 export const CategoryDetailView: React.FC<CategoryDetailViewProps> = ({
-  categoryId = 'cat-computer',
+  categoryId = 'computer',
   onSelectTest,
   onNavigateHome,
   onSelectCategory,
@@ -163,12 +163,12 @@ export const CategoryDetailView: React.FC<CategoryDetailViewProps> = ({
             {/* Category Quick Pill Selector */}
             <div className="flex flex-wrap gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
               {categories.map((cat) => {
-                const isCurrent = cat.id === currentCategory.id;
+                const isCurrent = cat.id === currentCategory.id || cat.slug === currentCategory.slug;
                 return (
                   <button
                     key={cat.id}
                     type="button"
-                    onClick={() => onSelectCategory(cat.id)}
+                    onClick={() => onSelectCategory(cat.slug || cat.id)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       isCurrent
                         ? 'bg-[#0B132B] text-white shadow-xs'
@@ -243,7 +243,7 @@ export const CategoryDetailView: React.FC<CategoryDetailViewProps> = ({
                   <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-xs text-slate-600">
                     <div className="flex items-center gap-1">
                       <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{test.questions.length} Qs</span>
+                      <span>{test.questions?.length || test.totalMarks || 10} Qs</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5 text-slate-400" />

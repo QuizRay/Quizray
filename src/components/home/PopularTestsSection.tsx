@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { quizService } from '../../services/quizService';
 import { POPULAR_TESTS } from '../../data/mockData';
 import { TestCard } from './TestCard';
 import type { TestItem } from '../../types';
@@ -8,11 +9,46 @@ interface PopularTestsSectionProps {
 }
 
 export const PopularTestsSection: React.FC<PopularTestsSectionProps> = ({ onSelectTest }) => {
+  const [tests, setTests] = useState<TestItem[]>(POPULAR_TESTS);
+
+  useEffect(() => {
+    let isCurrent = true;
+    quizService
+      .getAllTests()
+      .then((allTests) => {
+        if (isCurrent && allTests && allTests.length > 0) {
+          const mapped: TestItem[] = allTests.slice(0, 4).map((t) => ({
+            id: t.id,
+            title: t.title,
+            slug: t.slug,
+            categoryId: t.categoryId,
+            categoryName: t.categoryName,
+            questionCount: t.totalMarks || 10,
+            durationMinutes: t.durationMinutes,
+            difficulty: t.difficulty,
+            totalAttempts: t.totalAttempts,
+            rating: t.rating,
+            isPopular: true,
+            createdAt: t.createdAt,
+          }));
+          setTests(mapped);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load popular tests for home page:', err);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
   const handleStartTest = (test: TestItem) => {
+    const testIdOrSlug = test.id || test.slug;
     if (onSelectTest) {
-      onSelectTest(test.id);
+      onSelectTest(testIdOrSlug);
     } else {
-      window.location.hash = `#/test/${test.id}/instructions`;
+      window.location.hash = `#/test/${testIdOrSlug}/instructions`;
     }
   };
 
@@ -36,7 +72,7 @@ export const PopularTestsSection: React.FC<PopularTestsSectionProps> = ({ onSele
 
         {/* 4 Sample Test Cards in Responsive Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {POPULAR_TESTS.map((test) => (
+          {tests.map((test) => (
             <TestCard key={test.id} test={test} onStartTest={handleStartTest} />
           ))}
         </div>
