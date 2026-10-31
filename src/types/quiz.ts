@@ -40,6 +40,8 @@ export interface QuizTest {
   rating: number;
   createdAt: string;
   updatedAt?: string;
+  customDurationMinutes?: number;
+  customQuestionCount?: number;
 }
 
 export type QuestionStatus = 'current' | 'answered' | 'unanswered' | 'marked' | 'marked-answered';

@@ -76,11 +76,11 @@ const AppContent: React.FC = () => {
     }
   }, [route.name, testIdParam, activeTest, startQuiz, toTests]);
 
-  const handleStartQuizFromInstructions = async (testId: string) => {
+  const handleStartQuizFromInstructions = async (testId: string, questionCount?: number, durationMinutes?: number) => {
     try {
-      const test = await quizService.getStudentTestById(testId);
+      const test = await quizService.getStudentTestById(testId, questionCount, durationMinutes);
       if (test) {
-        startQuiz(test);
+        startQuiz(test, durationMinutes);
         toQuiz(test.id);
       } else {
         toTests();

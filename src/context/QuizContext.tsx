@@ -19,7 +19,7 @@ interface QuizContextValue {
   isSubmitting: boolean;
   submissionResult: QuizSubmission | null;
   // Actions
-  startQuiz: (test: QuizTest) => void;
+  startQuiz: (test: QuizTest, customDurationMinutes?: number) => void;
   selectAnswer: (questionId: string, optionId: OptionId) => void;
   clearAnswer: (questionId: string) => void;
   toggleMarkForReview: (questionId: string) => void;
@@ -110,7 +110,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Start or resume a quiz session
   const startQuiz = useCallback(
-    (test: QuizTest) => {
+    (test: QuizTest, customDurationMinutes?: number) => {
       isAutoSubmittingRef.current = false;
       const existingSession = quizService.loadActiveSession(test.id);
 
@@ -124,8 +124,12 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (remaining > 0) {
           setActiveTest(test);
           setQuizStartedAt(existingSession.quizStartedAt);
-          setTimeAllocatedSeconds(existingSession.timeAllocatedSeconds);
-          setRemainingSeconds(remaining);
+          // If custom duration provided (new attempt with custom settings), use it instead of session
+          const effectiveSecs = customDurationMinutes
+            ? customDurationMinutes * 60
+            : existingSession.timeAllocatedSeconds;
+          setTimeAllocatedSeconds(effectiveSecs);
+          setRemainingSeconds(customDurationMinutes ? effectiveSecs : remaining);
           setCurrentQuestionIndex(
             Math.min(existingSession.currentQuestionIndex, test.questions.length - 1)
           );
@@ -138,7 +142,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // Fresh session initialization
       const startedAt = Date.now();
-      const allocatedSecs = test.durationMinutes * 60;
+      const allocatedSecs = (customDurationMinutes ?? test.customDurationMinutes ?? test.durationMinutes) * 60;
       setActiveTest(test);
       setQuizStartedAt(startedAt);
       setTimeAllocatedSeconds(allocatedSecs);

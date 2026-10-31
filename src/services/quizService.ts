@@ -203,7 +203,7 @@ export const quizService = {
   // CRITICAL SECURITY REQUIREMENT:
   // Fetch test and questions for students WITHOUT exposing answer keys or explanations
   // ----------------------------------------------------------------------------
-  async getStudentTestById(testIdOrSlug: string): Promise<QuizTest | null> {
+  async getStudentTestById(testIdOrSlug: string, questionCount?: number, durationMinutes?: number): Promise<QuizTest | null> {
     if (!isSupabaseConfigured()) {
       const found = localTests.find((t) => t.id === testIdOrSlug || t.slug === testIdOrSlug);
       if (!found) return null;
@@ -227,10 +227,25 @@ export const quizService = {
 
     const client = supabase!;
 
-    // Call secure server-side RPC `get_test_for_student` which excludes correct_option_id and explanation
-    const { data, error } = await client.rpc('get_test_for_student', {
+    // Call secure server-side RPC with custom question count and pool scope for true variety each attempt
+    const rpcParams: Record<string, unknown> = {
       p_slug_or_id: testIdOrSlug,
-    });
+      p_shuffle_questions: true,
+      p_shuffle_options: true,
+    };
+    if (questionCount && questionCount > 0) {
+      // Use category-scoped pool for true randomization across all category questions
+      Object.assign(rpcParams, {
+        p_question_count: questionCount,
+        p_pool_scope: 'category',
+      });
+    } else {
+      Object.assign(rpcParams, {
+        p_question_count: null,
+        p_pool_scope: 'test',
+      });
+    }
+    const { data, error } = await client.rpc('get_custom_test_for_student', rpcParams);
 
     if (error) {
       throw new Error(`Database error fetching test: ${error.message}`);
@@ -290,10 +305,12 @@ export const quizService = {
       rating: Number(testRow.rating) || 4.8,
       createdAt: testRow.created_at,
       questions: studentQuestions,
+      customDurationMinutes: durationMinutes,
+      customQuestionCount: questionCount,
     };
   },
 
-  // Alias used by instructions view
+  // Alias used by instructions view (without custom params - used only for instructions display)
   async getTestById(testIdOrSlug: string): Promise<QuizTest | null> {
     return this.getStudentTestById(testIdOrSlug);
   },
@@ -307,7 +324,7 @@ export const quizService = {
     answers: Record<string, OptionId>,
     timeSpentSeconds: number
   ): Promise<QuizSubmission> {
-    const timeAllocatedSeconds = test.durationMinutes * 60;
+    const timeAllocatedSeconds = (test.customDurationMinutes ?? test.durationMinutes) * 60;
     const finalTimeSpent = Math.min(Math.max(timeSpentSeconds, 1), timeAllocatedSeconds);
 
     if (isSupabaseConfigured()) {
@@ -318,6 +335,8 @@ export const quizService = {
         p_test_id: test.id,
         p_answers: answers,
         p_time_taken_seconds: finalTimeSpent,
+        p_question_ids: test.questions.map((q) => q.id),
+        p_custom_duration_minutes: test.customDurationMinutes ?? null,
       });
 
       if (error) {
