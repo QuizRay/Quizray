@@ -260,7 +260,7 @@ export const quizService = {
     const rpcParams: Record<string, unknown> = {
       p_slug_or_id: targetSlugOrId,
       p_shuffle_questions: true,
-      p_shuffle_options: true,
+      p_shuffle_options: false,
     };
     if (questionCount && questionCount > 0) {
       // Use category-scoped pool for true randomization across all category questions
@@ -313,10 +313,13 @@ export const quizService = {
       text: q.text,
       difficulty: q.difficulty === 'easy' ? 'Beginner' : q.difficulty === 'hard' ? 'Advanced' : 'Intermediate',
       marks: q.marks,
-      options: (q.options || []).map((o) => ({
-        id: o.option_key,
-        text: o.text,
-      })),
+      options: (q.options || [])
+        .slice()
+        .sort((a, b) => a.option_key.localeCompare(b.option_key))
+        .map((o) => ({
+          id: o.option_key,
+          text: o.text,
+        })),
     }));
 
     return {

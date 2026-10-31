@@ -33,15 +33,15 @@ export const QuizTimer: React.FC<QuizTimerProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border font-mono font-bold text-sm sm:text-base shadow-2xs transition-colors duration-200 ${colorClasses}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm shadow-2xs transition-colors duration-200 shrink-0 ${colorClasses}`}
       role="timer"
       aria-live="polite"
       aria-label={`Time remaining: ${minutes} minutes and ${seconds} seconds`}
     >
       {isUrgent ? (
-        <AlertTriangle className="w-4 h-4 text-rose-600" />
+        <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 shrink-0" />
       ) : (
-        <Clock className={`w-4 h-4 ${iconColor}`} />
+        <Clock className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${iconColor} shrink-0`} />
       )}
       <span className="tracking-wider">{formattedTime}</span>
     </div>

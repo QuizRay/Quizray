@@ -89,35 +89,35 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
   };
 
   return (
-    <div className="bg-slate-50 min-h-[calc(100vh-5rem)] pb-12">
-      {/* Sticky Quiz Engine Top Bar */}
-      <div className="sticky top-18 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between gap-3">
-            {/* Left: Title and Question Counter */}
-            <div className="flex items-center gap-3">
+    <div className="bg-slate-50 min-h-screen pb-12">
+      {/* Sticky Quiz Engine Top Bar - pinned to top-0 */}
+      <div className="sticky top-0 z-30 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            {/* Left: Exit + Title + Counter */}
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <button
                 type="button"
                 onClick={() => setShowExitModal(true)}
-                className="text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="text-xs font-semibold text-slate-500 hover:text-rose-600 transition-colors px-2 py-1 rounded-lg hover:bg-slate-100 cursor-pointer shrink-0"
                 title="Exit Test"
               >
                 Exit
               </button>
-              <div className="hidden sm:block h-5 w-[1px] bg-slate-200" />
-              <div>
-                <h1 className="text-xs sm:text-sm font-bold text-[#0B132B] truncate max-w-[180px] sm:max-w-xs md:max-w-md">
+              <div className="hidden sm:block h-4 w-[1px] bg-slate-200 shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-xs sm:text-sm font-bold text-[#0B132B] truncate max-w-[120px] xs:max-w-[170px] sm:max-w-xs md:max-w-md">
                   {activeTest.title}
                 </h1>
-                <p className="text-[11px] text-slate-500 font-medium">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none mt-0.5">
                   Question <span className="font-bold text-[#2563EB]">{currentQuestionIndex + 1}</span> of{' '}
                   <span className="font-bold text-[#0B132B]">{totalQuestions}</span>
                 </p>
               </div>
             </div>
 
-            {/* Right: Timer and Submit Action */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Right: Timer + Palette + Submit */}
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
               {/* Countdown Timer */}
               <QuizTimer
                 remainingSeconds={remainingSeconds}
@@ -128,10 +128,10 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
               <button
                 type="button"
                 onClick={() => setMobilePaletteOpen(true)}
-                className="lg:hidden p-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 flex items-center justify-center cursor-pointer"
+                className="lg:hidden p-1.5 sm:p-2 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 flex items-center justify-center cursor-pointer shrink-0"
                 aria-label="Open question palette"
               >
-                <LayoutGrid className="w-5 h-5" />
+                <LayoutGrid className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
 
               {/* Submit Test Button */}
@@ -140,16 +140,16 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                 size="sm"
                 onClick={() => setShowSubmitModal(true)}
                 disabled={isSubmitting}
-                className="font-bold shadow-2xs"
+                className="font-bold shadow-2xs text-xs sm:text-sm px-2.5 py-1 sm:px-3 sm:py-1.5 shrink-0"
               >
-                <Send className="w-3.5 h-3.5 mr-1" />
+                <Send className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-1" />
                 <span>Submit</span>
               </Button>
             </div>
           </div>
 
           {/* Linear Progress Bar */}
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mt-2.5">
+          <div className="w-full bg-slate-100 h-1 sm:h-1.5 rounded-full overflow-hidden mt-2">
             <div
               className="bg-[#2563EB] h-full transition-all duration-300 ease-out rounded-full"
               style={{ width: `${progressPercent}%` }}
@@ -163,21 +163,21 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Main Question Interface (8 cols on desktop) */}
           <div className="lg:col-span-8 flex flex-col justify-between">
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-xs">
+            <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 md:p-8 shadow-xs">
               {/* Question Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6 gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-8 h-8 rounded-xl bg-blue-50 text-[#2563EB] font-extrabold text-sm flex items-center justify-center">
+              <div className="flex flex-wrap items-center justify-between pb-3 sm:pb-4 border-b border-slate-100 mb-4 sm:mb-6 gap-2">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-50 text-[#2563EB] font-extrabold text-xs sm:text-sm flex items-center justify-center">
                     {currentQuestionIndex + 1}
                   </span>
                   <Badge variant="difficulty" difficulty={currentQuestion.difficulty} size="sm">
                     {currentQuestion.difficulty}
                   </Badge>
-                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                  <span className="text-[10px] sm:text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
                     +{currentQuestion.marks} Mark
                   </span>
                 </div>
@@ -186,7 +186,7 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                 <button
                   type="button"
                   onClick={() => toggleMarkForReview(currentQuestion.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                     isMarked
                       ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-2xs'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200'
@@ -196,19 +196,19 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                   <Bookmark
                     className={`w-3.5 h-3.5 ${isMarked ? 'fill-amber-500 text-amber-500' : 'text-slate-500'}`}
                   />
-                  <span>{isMarked ? 'Marked for Review' : 'Mark for Review'}</span>
+                  <span>{isMarked ? 'Marked' : 'Mark for Review'}</span>
                 </button>
               </div>
 
               {/* Question Body */}
-              <div className="mb-8">
-                <h2 className="text-base sm:text-lg md:text-xl font-bold text-[#0B132B] leading-relaxed">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-[#0B132B] leading-snug sm:leading-relaxed">
                   {currentQuestion.text}
                 </h2>
               </div>
 
               {/* Options List */}
-              <div className="space-y-3" role="radiogroup" aria-labelledby="question-text">
+              <div className="space-y-2.5 sm:space-y-3" role="radiogroup" aria-labelledby="question-text">
                 {currentQuestion.options.map((option) => {
                   const isSelected = selectedOptionId === option.id;
 
@@ -217,7 +217,7 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                       key={option.id}
                       type="button"
                       onClick={() => selectAnswer(currentQuestion.id, option.id)}
-                      className={`w-full flex items-center justify-between p-4 rounded-2xl border text-left transition-all duration-150 cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all duration-150 cursor-pointer ${
                         isSelected
                           ? 'border-[#2563EB] bg-blue-50/80 shadow-xs ring-2 ring-[#2563EB]/40'
                           : 'border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300'
@@ -225,9 +225,9 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                       role="radio"
                       aria-checked={isSelected}
                     >
-                      <div className="flex items-center gap-3.5">
+                      <div className="flex items-center gap-3">
                         <span
-                          className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shrink-0 transition-colors ${
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl font-bold text-xs flex items-center justify-center shrink-0 transition-colors ${
                             isSelected
                               ? 'bg-[#2563EB] text-white'
                               : 'bg-slate-100 text-slate-700'
@@ -236,7 +236,7 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                           {option.id}
                         </span>
                         <span
-                          className={`text-sm sm:text-base font-medium ${
+                          className={`text-xs sm:text-sm md:text-base font-medium ${
                             isSelected ? 'text-[#0B132B] font-semibold' : 'text-slate-700'
                           }`}
                         >
@@ -245,16 +245,16 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                       </div>
 
                       {isSelected && (
-                        <CheckCircle2 className="w-5 h-5 text-[#2563EB] shrink-0 ml-2" />
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563EB] shrink-0 ml-2" />
                       )}
                     </button>
                   );
                 })}
               </div>
 
-              {/* Deselect / Clear selection row */}
+              {/* Clear Choice action button */}
               {selectedOptionId && (
-                <div className="mt-4 flex justify-end">
+                <div className="mt-4 pt-3 border-t border-slate-100 flex justify-end">
                   <button
                     type="button"
                     onClick={() => clearAnswer(currentQuestion.id)}
@@ -268,15 +268,15 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
             </div>
 
             {/* Bottom Navigation Buttons */}
-            <div className="mt-6 flex items-center justify-between gap-3">
+            <div className="mt-4 sm:mt-6 flex items-center justify-between gap-2 sm:gap-3">
               <Button
                 variant="outline"
-                size="md"
+                size="sm"
                 onClick={prevQuestion}
                 disabled={currentQuestionIndex === 0}
-                className="font-medium"
+                className="font-medium text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2"
               >
-                <ChevronLeft className="w-4 h-4 mr-1" />
+                <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                 <span>Previous</span>
               </Button>
 
@@ -284,22 +284,22 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
                 {currentQuestionIndex === totalQuestions - 1 ? (
                   <Button
                     variant="primary"
-                    size="md"
+                    size="sm"
                     onClick={() => setShowSubmitModal(true)}
-                    className="font-bold shadow-md shadow-blue-500/15"
+                    className="font-bold shadow-md shadow-blue-500/15 text-xs sm:text-sm px-3.5 py-1.5 sm:px-5 sm:py-2"
                   >
                     <span>Finish & Submit</span>
-                    <Send className="w-4 h-4 ml-1.5" />
+                    <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1.5" />
                   </Button>
                 ) : (
                   <Button
                     variant="primary"
-                    size="md"
+                    size="sm"
                     onClick={nextQuestion}
-                    className="font-semibold shadow-xs"
+                    className="font-semibold shadow-xs text-xs sm:text-sm px-3.5 py-1.5 sm:px-5 sm:py-2"
                   >
                     <span>Save & Next</span>
-                    <ChevronRight className="w-4 h-4 ml-1" />
+                    <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 ml-1" />
                   </Button>
                 )}
               </div>
@@ -308,7 +308,7 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
 
           {/* Desktop Question Palette Sidebar (4 cols on desktop) */}
           <div className="hidden lg:block lg:col-span-4">
-            <div className="sticky top-32">
+            <div className="sticky top-20">
               <QuestionPalette
                 questions={activeTest.questions}
                 currentQuestionIndex={currentQuestionIndex}
@@ -322,14 +322,14 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
         </div>
       </div>
 
-      {/* Mobile Question Palette Drawer Modal */}
+      {/* Mobile Question Palette Bottom Drawer */}
       {mobilePaletteOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end justify-center lg:hidden"
           onClick={() => setMobilePaletteOpen(false)}
         >
           <div
-            className="bg-white rounded-t-3xl w-full max-h-[80vh] overflow-y-auto p-5 shadow-2xl animate-in slide-in-from-bottom duration-200"
+            className="w-full max-h-[85vh] overflow-y-auto bg-white rounded-t-3xl p-5 shadow-2xl animate-in slide-in-from-bottom duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
@@ -337,7 +337,8 @@ export const QuizEngineView: React.FC<QuizEngineViewProps> = ({ onSubmitted, onE
               <button
                 type="button"
                 onClick={() => setMobilePaletteOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+                aria-label="Close palette"
               >
                 <X className="w-5 h-5" />
               </button>
